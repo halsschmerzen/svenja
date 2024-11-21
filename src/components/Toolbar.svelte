@@ -9,6 +9,9 @@
     function handleAddEntity() {
         dispatch('addEntity');
     }
+    function handleGridToggle() {
+        dispatch('toggleGrid');
+    }
 
 </script>
 
@@ -17,6 +20,7 @@
     <button>Hallo Welt!</button>
     <button on:click={handleReset}>Reset</button>
     <button on:click={handleAddEntity}>Entity</button>
+    <button on:click={handleGridToggle}>Toggle Grid</button>
 </div>
 
 <style>

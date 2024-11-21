@@ -11,6 +11,7 @@
     let offsetX = 0;
     let offsetY = 0;
     let isDragging = false;
+    let gridEnabled = false;
     let lastX = 0;
     let lastY = 0;
     const cellSize = 30;
@@ -34,7 +35,9 @@
         ctx.scale(scale, scale);
         
         
-        drawGrid(ctx);
+        if(gridEnabled) {
+            drawGrid(ctx);
+        }
         drawCenter(ctx);
         ctx.restore();
     }
@@ -100,6 +103,53 @@
         if (ctx) draw(ctx);
     }
 
+    function resetView() {
+        scale = 1;
+        offsetX = 0;
+        offsetY = 0;
+        const ctx = canvas.getContext('2d');
+        if(ctx) draw(ctx);
+    }
+
+    onMount(() => {
+        const ctx = canvas.getContext('2d');
+        if(!ctx) return;
+        draw(ctx);
+    });
+
+    function addEntity() {
+        const centerX = (width/2-offsetX)/scale;
+        const centerY = (height/2-offsetY)/scale;
+
+        const newEntity: EntityType = {
+            id: entities.length+1,
+            name: `Entity ${entities.length+1}`,
+            x: centerX,
+            y: centerY,
+            isWeak: false
+        };
+
+        entities = [...entities, newEntity];
+    }
+
+    /*
+    * Functions concerning the Grid
+    */
+
+    function drawCenter(ctx: CanvasRenderingContext2D) {
+        const dotSize = 4;
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(255,0,0,0.3)";
+        ctx.arc(width/2+10,height/2+2,dotSize/scale,0,Math.PI*2);
+        ctx.fill();
+    }
+
+    function toggleGrid() {
+        gridEnabled = !gridEnabled;
+        const ctx = canvas.getContext('2d');
+        if(ctx) draw(ctx);
+    }
+
     function drawGrid(ctx: CanvasRenderingContext2D) {
         const gridSize = cellSize;
         const startX = Math.floor(-offsetX / scale / gridSize) * gridSize;
@@ -124,43 +174,6 @@
         ctx.stroke();
     }
 
-    function resetView() {
-        scale = 1;
-        offsetX = 0;
-        offsetY = 0;
-        const ctx = canvas.getContext('2d');
-        if(ctx) draw(ctx);
-    }
-
-    function drawCenter(ctx: CanvasRenderingContext2D) {
-        const dotSize = 4;
-        ctx.beginPath();
-        ctx.fillStyle = "rgba(255,0,0,0.3)";
-        ctx.arc(width/2+10,height/2+2,dotSize/scale,0,Math.PI*2);
-        ctx.fill();
-    }
-
-    onMount(() => {
-        const ctx = canvas.getContext('2d');
-        if(!ctx) return;
-        draw(ctx);
-    });
-
-    function addEntity() {
-        const centerX = (width/2-offsetX)/scale;
-        const centerY = (height/2-offsetY)/scale;
-
-        const newEntity: EntityType = {
-            id: entities.length+1,
-            name: `Entity ${entities.length+1}`,
-            x: centerX,
-            y: centerY,
-            isWeak: false
-        };
-
-        entities = [...entities, newEntity];
-    }
-
 </script>
 
 <svelte:window
@@ -170,7 +183,7 @@
     on:mousemove={handleMouseMove}
 />
 
-<Toolbar on:reset={resetView} on:addEntity={addEntity}/>
+<Toolbar on:reset={resetView} on:addEntity={addEntity} on:toggleGrid={toggleGrid}/>
 {#each entities as entity (entity.id)}
     <Entity 
         bind:entity
