@@ -61,7 +61,7 @@
     .entity {
         position: absolute;
         width: 120px;
-        height: 60px;
+        height: 40px;
         background: white;
         border: 2px solid #333;
         border-radius: 4px;
@@ -71,6 +71,7 @@
         align-items: center;
         justify-content: center;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        z-index: 1;
     }
 
     .weak {
@@ -78,7 +79,7 @@
     }
 
     .selected {
-        outline: 2px solid green;
+        outline: 1px solid green;
     }
 
     .name {

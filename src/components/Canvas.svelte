@@ -4,7 +4,7 @@
     import type {Entity as EntityType} from '../Types/Entity';
     import type { Attribute as AttributeType } from "../Types/Attribute";
     import Entity from "./ER-Components/Entity.svelte";
-    
+    import Attribute from "./ER-Components/Attribute.svelte";
     
 
     let canvas: HTMLCanvasElement;
@@ -19,7 +19,7 @@
     let lastY = 0;
     let selectedEntity: EntityType | null = null;
     const cellSize = 30;
-    const minScale = 0.5;
+    const minScale = 1;
     const maxScale = 5;
 
     let entities: EntityType[] = [
@@ -191,6 +191,7 @@
 
         if(!selectedEntity) {
             console.log('Nothing selected. How did you even get here?')
+            return;
         }
 
         if (selectedEntity) {
@@ -199,8 +200,8 @@
                 const newAttribute: AttributeType = {
                     id: entity.attributes.length + 1,
                     name: `Attribute ${entity.attributes.length + 1}`,
-                    x: entity.x - 200,
-                    y: entity.y,
+                    x: 200,
+                    y: 0,
                     connectedTo: entity,
                     isPrimary: false,
                     isCalculated: false,
@@ -210,6 +211,8 @@
             }
         }
     }
+
+    
 
 </script>
 
@@ -227,6 +230,10 @@
     on:addAttribute={handleAddAttribute}
     {selectedEntity}
 />
+
+
+
+
 {#each entities as entity (entity.id)}
     <Entity
         bind:entity
@@ -237,6 +244,15 @@
         onSelect={() => selectedEntity = entity}
         onDeselect={() => selectedEntity = null}
     />
+    {#each entity.attributes as attribute (attribute.id)}
+        <Attribute
+            {attribute}
+            {scale}
+            {offsetX}
+            {offsetY}
+        />
+    {/each}
+
 {/each}
 <canvas
     bind:this={canvas}
