@@ -10,7 +10,9 @@
     let isDragging = false;
     let lastX = 0;
     let lastY = 0;
-    const cellSize = 50;
+    const cellSize = 30;
+    const minScale = 0.5;
+    const maxScale = 5;
 
 
     function draw(ctx: CanvasRenderingContext2D) {
@@ -40,6 +42,14 @@
         
         offsetX += deltaX;
         offsetY += deltaY;
+
+        const maxOffsetX = width / 3;
+        const minOffsetX = -width / 3;
+        const maxOffsetY = height / 3;
+        const minOffsetY = -height / 3;
+
+        offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, offsetX));
+        offsetY = Math.max(minOffsetY, Math.min(maxOffsetY, offsetY));
         
         lastX = event.clientX;
         lastY = event.clientY;
@@ -64,9 +74,12 @@
         const mouseY = event.clientY - rect.top;
 
         const newScale = scale * scaleChange;
-        
+    
+        if(newScale < minScale || newScale > maxScale) return;
+
         offsetX = mouseX - (mouseX - offsetX) * scaleChange;
         offsetY = mouseY - (mouseY - offsetY) * scaleChange;
+        
         
         scale = newScale;
 
@@ -82,7 +95,7 @@
         const endY = startY + height / scale + gridSize;
 
         ctx.beginPath();
-        ctx.strokeStyle = '#ddd';
+        ctx.strokeStyle = 'rgba(0,0,0,0.4)';
         ctx.lineWidth = 1 / scale;
 
         for(let x = startX; x <= endX; x += gridSize) {
