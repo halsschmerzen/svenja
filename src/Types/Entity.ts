@@ -5,3 +5,4 @@ export interface Entity {
     y: number;
     isWeak: boolean;
 }
+

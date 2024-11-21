@@ -1,6 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import Toolbar from "./Toolbar.svelte";
+    import type {Entity as EntityType} from '../Types/Entity';
+    import Entity from "./ER-Components/Entity.svelte";
 
     let canvas: HTMLCanvasElement;
     let width = window.innerWidth;
@@ -15,6 +17,15 @@
     const minScale = 0.5;
     const maxScale = 5;
 
+    let entities: EntityType[] = [
+        {
+            id: 0,
+            name: "Test Entity",
+            x: 100,
+            y: 100,
+            isWeak: false
+        }
+    ];
 
     function draw(ctx: CanvasRenderingContext2D) {
         ctx.clearRect(0, 0, width, height);
@@ -134,6 +145,21 @@
         draw(ctx);
     });
 
+    function addEntity() {
+        const centerX = (width/2-offsetX)/scale;
+        const centerY = (height/2-offsetY)/scale;
+
+        const newEntity: EntityType = {
+            id: entities.length+1,
+            name: `Entity ${entities.length+1}`,
+            x: centerX,
+            y: centerY,
+            isWeak: false
+        };
+
+        entities = [...entities, newEntity];
+    }
+
 </script>
 
 <svelte:window
@@ -143,8 +169,17 @@
     on:mousemove={handleMouseMove}
 />
 
-<Toolbar on:reset={resetView}/>
-
+<Toolbar on:reset={resetView} on:addEntity={addEntity}/>
+{#each entities as entity (entity.id)}
+    <Entity 
+        entity={{
+            ...entity,
+            x: entity.x * scale + offsetX,
+            y: entity.y * scale + offsetY
+        }} 
+        {scale}
+    />
+{/each}
 <canvas
     bind:this={canvas}
     width={width}

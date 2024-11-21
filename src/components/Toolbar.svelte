@@ -6,12 +6,17 @@
         dispatch('reset');
     }
 
+    function handleAddEntity() {
+        dispatch('addEntity');
+    }
+
 </script>
 
 <div class="toolbar">
     <p>svenja</p>
     <button>Hallo Welt!</button>
     <button on:click={handleReset}>Reset</button>
+    <button on:click={handleAddEntity}>Entity</button>
 </div>
 
 <style>
