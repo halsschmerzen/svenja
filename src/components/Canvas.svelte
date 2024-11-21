@@ -55,6 +55,7 @@
         offsetX += deltaX;
         offsetY += deltaY;
 
+
         const maxOffsetX = width / 3;
         const minOffsetX = -width / 3;
         const maxOffsetY = height / 3;
@@ -172,12 +173,10 @@
 <Toolbar on:reset={resetView} on:addEntity={addEntity}/>
 {#each entities as entity (entity.id)}
     <Entity 
-        entity={{
-            ...entity,
-            x: entity.x * scale + offsetX,
-            y: entity.y * scale + offsetY
-        }} 
+        bind:entity
         {scale}
+        {offsetX}
+        {offsetY}
     />
 {/each}
 <canvas
