@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import Toolbar from "./Toolbar.svelte";
 
     let canvas: HTMLCanvasElement;
     let width = window.innerWidth;
@@ -21,9 +22,9 @@
         ctx.translate(offsetX, offsetY);
         ctx.scale(scale, scale);
         
-
-        drawGrid(ctx);
         
+        drawGrid(ctx);
+        drawCenter(ctx);
         ctx.restore();
     }
 
@@ -111,6 +112,22 @@
         ctx.stroke();
     }
 
+    function resetView() {
+        scale = 1;
+        offsetX = 0;
+        offsetY = 0;
+        const ctx = canvas.getContext('2d');
+        if(ctx) draw(ctx);
+    }
+
+    function drawCenter(ctx: CanvasRenderingContext2D) {
+        const dotSize = 4;
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(255,0,0,0.3)";
+        ctx.arc(width/2+10,height/2+2,dotSize/scale,0,Math.PI*2);
+        ctx.fill();
+    }
+
     onMount(() => {
         const ctx = canvas.getContext('2d');
         if(!ctx) return;
@@ -125,6 +142,8 @@
     on:mouseup={handleMouseUp}
     on:mousemove={handleMouseMove}
 />
+
+<Toolbar on:reset={resetView}/>
 
 <canvas
     bind:this={canvas}

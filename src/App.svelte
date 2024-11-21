@@ -4,7 +4,6 @@
 </script>
 
 <main>
-  <Toolbar/>
   <Canvas/>
 </main>
 

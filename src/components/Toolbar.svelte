@@ -1,14 +1,24 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     const dispatch = createEventDispatcher();
+
+    function handleReset() {
+        dispatch('reset');
+    }
+
 </script>
 
 <div class="toolbar">
     <p>svenja</p>
     <button>Hallo Welt!</button>
+    <button on:click={handleReset}>Reset</button>
 </div>
 
 <style>
+    * {
+        font-size: 12px;
+        font-family: monospace;
+    }
     .toolbar {
         position: fixed;
         top: 0;
