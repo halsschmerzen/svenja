@@ -20,7 +20,7 @@
         if (!isDragging) return;
         const newX = (event.clientX - startX - offsetX) / scale - attribute.connectedTo.x;
         const newY = (event.clientY - startY - offsetY) / scale - attribute.connectedTo.y;
-        attribute.x = newX;
+        attribute.x = newX;   
         attribute.y = newY;
     }
 
@@ -28,7 +28,13 @@
         isDragging = false;
     }
 
-    $: connectionPath = `M ${(attribute.connectedTo.x + attribute.x) * scale + offsetX + 45} ${(attribute.connectedTo.y + attribute.y) * scale + offsetY + 30} L ${(attribute.connectedTo.x + attribute.x) * scale + offsetX + 60} ${(attribute.connectedTo.y + attribute.y) * scale + offsetY + 30}`;
+    $: entityCenterX = attribute.connectedTo.x * scale + offsetX + 60; 
+    $: entityCenterY = attribute.connectedTo.y * scale + offsetY; 
+    
+    $: attributeLeftX = (attribute.connectedTo.x + attribute.x) * scale + offsetX+70;
+    $: attributeCenterY = (attribute.connectedTo.y + attribute.y) * scale + offsetY; 
+
+    $: connectionPath = `M ${entityCenterX} ${entityCenterY} L ${attributeLeftX} ${attributeCenterY}`;
 
 </script>
 
@@ -37,8 +43,19 @@
     on:mouseup={handleMouseUp}
 />
 
-<svg class="connection-line">
-    <path d={connectionPath} stroke="#333" stroke-width="2" fill="none"/>
+<svg 
+    class="connection-line" 
+    width={window.innerWidth} 
+    height={window.innerHeight} 
+    style="position: fixed; top: 0; left: 0; pointer-events: none;"
+>
+    <path 
+        d={connectionPath} 
+        stroke="#333" 
+        stroke-width="2" 
+        fill="none"
+        vector-effect="non-scaling-stroke"
+    />
 </svg>
 
 <div class="attribute"
