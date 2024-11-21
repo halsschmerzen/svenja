@@ -1,5 +1,9 @@
 <script lang="ts">
     import type { Entity as EntityType } from "../../Types/Entity";
+    
+    export let isSelected = false;
+    export let onSelect: () => void;
+    export let onDeselect: () => void;
 
     export let entity: EntityType;
     export let scale = 1;
@@ -25,6 +29,17 @@
     function handleMouseUp() {
         isDragging = false;
     }
+
+    function handleClick(event: MouseEvent) {
+        event.stopPropagation();
+        if (!isSelected) {
+            onSelect();
+        } else {
+            onDeselect();
+        }
+    }
+
+
 </script>
 
 <svelte:window
@@ -34,8 +49,10 @@
 
 <div class="entity"
     class:weak={entity.isWeak}
+    class:selected={isSelected}
     style="top: {entity.y * scale + offsetY}px; left: {entity.x * scale + offsetX}px; transform: scale({scale}); transform-origin: top left;"
     on:mousedown={handleMouseDown}
+    on:click={handleClick}
 >
     <div class="name">{entity.name}</div>
 </div>
@@ -58,6 +75,10 @@
 
     .weak {
         border-style: dashed;
+    }
+
+    .selected {
+        outline: 2px solid green;
     }
 
     .name {

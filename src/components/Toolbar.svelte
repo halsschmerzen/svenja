@@ -1,5 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import type { Entity } from "../Types/Entity";
+    export let selectedEntity: Entity | null = null;
+
     const dispatch = createEventDispatcher();
 
     function handleReset() {
@@ -13,6 +16,10 @@
         dispatch('toggleGrid');
     }
 
+    function handleAddAttribute() {
+        dispatch('addAttribute')
+    }
+
 </script>
 
 <div class="toolbar">
@@ -21,6 +28,9 @@
     <button on:click={handleReset}>Reset</button>
     <button on:click={handleAddEntity}>Entity</button>
     <button on:click={handleGridToggle}>Toggle Grid</button>
+    {#if selectedEntity}
+        <button on:click={handleAddAttribute}>Add Attribute</button>
+    {/if}
 </div>
 
 <style>

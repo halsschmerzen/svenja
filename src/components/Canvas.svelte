@@ -2,7 +2,10 @@
     import { onMount } from "svelte";
     import Toolbar from "./Toolbar.svelte";
     import type {Entity as EntityType} from '../Types/Entity';
+    import type { Attribute as AttributeType } from "../Types/Attribute";
     import Entity from "./ER-Components/Entity.svelte";
+    
+    
 
     let canvas: HTMLCanvasElement;
     let width = window.innerWidth;
@@ -14,6 +17,7 @@
     let gridEnabled = false;
     let lastX = 0;
     let lastY = 0;
+    let selectedEntity: EntityType | null = null;
     const cellSize = 30;
     const minScale = 0.5;
     const maxScale = 5;
@@ -24,7 +28,8 @@
             name: "Test Entity",
             x: 100,
             y: 100,
-            isWeak: false
+            isWeak: false,
+            attributes: []
         }
     ];
 
@@ -126,7 +131,8 @@
             name: `Entity ${entities.length+1}`,
             x: centerX,
             y: centerY,
-            isWeak: false
+            isWeak: false,
+            attributes: []
         };
 
         entities = [...entities, newEntity];
@@ -148,6 +154,7 @@
         gridEnabled = !gridEnabled;
         const ctx = canvas.getContext('2d');
         if(ctx) draw(ctx);
+        console.log(entities)
     }
 
     function drawGrid(ctx: CanvasRenderingContext2D) {
@@ -174,6 +181,36 @@
         ctx.stroke();
     }
 
+    /**
+     * 
+     * Functions concerning Attributes
+     * 
+    */
+
+    function handleAddAttribute() {
+
+        if(!selectedEntity) {
+            console.log('Nothing selected. How did you even get here?')
+        }
+
+        if (selectedEntity) {
+            const entity = entities.find(e => e.id === selectedEntity.id);
+            if (entity) {
+                const newAttribute: AttributeType = {
+                    id: entity.attributes.length + 1,
+                    name: `Attribute ${entity.attributes.length + 1}`,
+                    x: entity.x - 200,
+                    y: entity.y,
+                    connectedTo: entity,
+                    isPrimary: false,
+                    isCalculated: false,
+                    isMultivalue: false
+                };
+                entity.attributes = [...entity.attributes, newAttribute];
+            }
+        }
+    }
+
 </script>
 
 <svelte:window
@@ -183,13 +220,22 @@
     on:mousemove={handleMouseMove}
 />
 
-<Toolbar on:reset={resetView} on:addEntity={addEntity} on:toggleGrid={toggleGrid}/>
+<Toolbar 
+    on:reset={resetView} 
+    on:addEntity={addEntity} 
+    on:toggleGrid={toggleGrid} 
+    on:addAttribute={handleAddAttribute}
+    {selectedEntity}
+/>
 {#each entities as entity (entity.id)}
-    <Entity 
+    <Entity
         bind:entity
         {scale}
         {offsetX}
         {offsetY}
+        isSelected={selectedEntity?.id === entity.id}
+        onSelect={() => selectedEntity = entity}
+        onDeselect={() => selectedEntity = null}
     />
 {/each}
 <canvas
@@ -198,6 +244,7 @@
     height={height}
     on:wheel={handleWheel}
     on:mousedown={handleMouseDown}
+    on:click={() => selectedEntity = null}
 />
 
 
