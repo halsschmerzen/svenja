@@ -5,7 +5,7 @@
     import type { Attribute as AttributeType } from "../Types/Attribute";
     import Entity from "./ER-Components/Entity.svelte";
     import Attribute from "./ER-Components/Attribute.svelte";
-    
+    import Sidebar from "./Sidebar.svelte";
 
     let canvas: HTMLCanvasElement;
     let width = window.innerWidth;
@@ -15,6 +15,7 @@
     let offsetY = 0;
     let isDragging = false;
     let gridEnabled = false;
+    let isSidebarOpen = false;
     let lastX = 0;
     let lastY = 0;
     let selectedEntity: EntityType | null = null;
@@ -212,6 +213,10 @@
         }
     }
 
+    function toggleSidebar() {
+        isSidebarOpen = !isSidebarOpen;
+    }
+
     
 
 </script>
@@ -254,6 +259,19 @@
     {/each}
 
 {/each}
+
+<button 
+    class="toggle-sidebar" 
+    on:click={toggleSidebar}
+>
+    {isSidebarOpen ? '→' : '←'}
+</button>
+
+<Sidebar 
+    isOpen={isSidebarOpen}
+    {selectedEntity}
+/>
+
 <canvas
     bind:this={canvas}
     width={width}
@@ -269,5 +287,18 @@
         display: block;
         background: white;
         touch-action: none;
+    }
+    .toggle-sidebar {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1001;
+        padding: 8px;
+        background: white;
+        border: 1px solid #ccc;
+        border-right: none;
+        border-radius: 4px 0 0 4px;
+        cursor: pointer;
     }
 </style>

@@ -36,7 +36,7 @@
 <style>
     * {
         font-size: 12px;
-        font-family: monospace;
+        
     }
     .toolbar {
         position: fixed;
