@@ -20,6 +20,10 @@
         dispatch('addAttribute')
     }
 
+    function handleToggleTheme() {
+        dispatch('toggleTheme')
+    }
+
 </script>
 
 <div class="toolbar">
@@ -28,6 +32,7 @@
     <button on:click={handleReset}>Reset</button>
     <button on:click={handleAddEntity}>Entity</button>
     <button on:click={handleGridToggle}>Toggle Grid</button>
+    <button on:click={handleToggleTheme}>Toggle Theme</button>
     {#if selectedEntity}
         <button on:click={handleAddAttribute}>Add Attribute</button>
     {/if}
@@ -43,8 +48,8 @@
         top: 0;
         left: 0;
         width: 100%;
-        color:aliceblue;
-        background-color: red;
+        color: var(--text-color);
+        background-color: var(--toolbar-background);
         padding: 0.5rem;
         box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.125);
         z-index: 1000;

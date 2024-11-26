@@ -38,7 +38,7 @@
         right: -300px;
         width: 300px;
         height: calc(100vh - 60px);
-        background: white;
+        background: var(--background-color);
         box-shadow: -2px 0 5px rgba(0,0,0,0.1);
         transition: right 0.3s ease;
         z-index: 1000;
@@ -54,6 +54,10 @@
 
     h2 {
         margin: 0 0 20px 0;
+    }
+
+    h2, h3, p, label, input {
+        color: var(--text-color);
     }
 
     .properties {

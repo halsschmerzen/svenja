@@ -62,8 +62,8 @@
         position: absolute;
         width: 120px;
         height: 40px;
-        background: white;
-        border: 2px solid #333;
+        background: var(--background-color);
+        border: 2px solid var(--text-color);
         border-radius: 4px;
         cursor: move;
         user-select: none;
@@ -85,6 +85,6 @@
     .name {
         font-family: monospace;
         font-size: 14px;
-        color: #333;
+        color: var(--text-color);
     }
 </style>

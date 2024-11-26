@@ -75,8 +75,8 @@
         z-index: 1;;
         width: 90px;
         height: 40px;
-        background: white;
-        border: 2px solid #666;
+        background: var(--background-color);
+        border: 2px solid var(--text-color);
         border-radius: 60px;
         cursor: move;
         user-select: none;
@@ -111,6 +111,6 @@
     .name {
         font-family: monospace;
         font-size: 12px;
-        color: #333;
+        color: var(--text-color);
     }
 </style>

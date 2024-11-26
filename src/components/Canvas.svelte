@@ -3,9 +3,11 @@
     import Toolbar from "./Toolbar.svelte";
     import type {Entity as EntityType} from '../Types/Entity';
     import type { Attribute as AttributeType } from "../Types/Attribute";
+    import { toggleTheme } from '../stores/theme';
     import Entity from "./ER-Components/Entity.svelte";
     import Attribute from "./ER-Components/Attribute.svelte";
     import Sidebar from "./Sidebar.svelte";
+    import { theme } from '../stores/theme';
 
     let canvas: HTMLCanvasElement;
     let width = window.innerWidth;
@@ -113,8 +115,7 @@
         scale = 1;
         offsetX = 0;
         offsetY = 0;
-        const ctx = canvas.getContext('2d');
-        if(ctx) draw(ctx);
+        updateOnce();
     }
 
     onMount(() => {
@@ -154,6 +155,7 @@
     function toggleGrid() {
         gridEnabled = !gridEnabled;
         const ctx = canvas.getContext('2d');
+        updateOnce();
         if(ctx) draw(ctx);
         console.log(entities)
     }
@@ -166,7 +168,7 @@
         const endY = startY + height / scale + gridSize;
 
         ctx.beginPath();
-        ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+        ctx.strokeStyle = $theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.3)';
         ctx.lineWidth = 1 / scale;
 
         for(let x = startX; x <= endX; x += gridSize) {
@@ -217,6 +219,16 @@
         isSidebarOpen = !isSidebarOpen;
     }
 
+    function updateOnce() {
+        const ctx = canvas.getContext('2d');
+        if(ctx) draw(ctx);
+    }
+    
+    function toggleCanvasTheme() {
+        toggleTheme();
+        updateOnce();
+    }
+
     
 
 </script>
@@ -233,6 +245,7 @@
     on:addEntity={addEntity} 
     on:toggleGrid={toggleGrid} 
     on:addAttribute={handleAddAttribute}
+    on:toggleTheme={toggleCanvasTheme}
     {selectedEntity}
 />
 
@@ -287,6 +300,7 @@
         display: block;
         background: white;
         touch-action: none;
+        background-color: var(--background-color);
     }
     .toggle-sidebar {
         position: fixed;
