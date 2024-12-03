@@ -238,6 +238,7 @@
 
     function handleAddRelationship() {
         isRelationshipMode = true;
+        handleEntityDeselect();
         selectedEntities = [];
         relationshipModeIndicator = 'Relationship Mode: Select two entities.';
         canvas.style.cursor = 'crosshair';
@@ -262,7 +263,8 @@
                 const newRelationship: RelationshipType = {
                     id: relationships.length + 1,
                     name: "has",
-                    entities: [selectedEntities[0], selectedEntities[1]]
+                    entities: [selectedEntities[0], selectedEntities[1]],
+                    relationship_type: '1-N' 
                 };
                 relationships = [...relationships, newRelationship];
                 selectedEntities = [];
@@ -288,6 +290,15 @@
 
     function handleEntityDeselect() {
         selectedEntity = null;
+    }
+
+    function handleRelationshipTypeUpdate(event: CustomEvent<{ relationship: RelationshipType }>) {
+        const updatedRelationship = event.detail.relationship;
+        const index = relationships.findIndex(r => r.id === updatedRelationship.id);
+        if (index !== -1) {
+            relationships[index].relationship_type = updatedRelationship.relationship_type;
+            relationships = [...relationships]; 
+        }
     }
 
 </script>
@@ -343,6 +354,7 @@
         {scale}
         {offsetX}
         {offsetY}
+        on:updateType={handleRelationshipTypeUpdate}
     />
 {/each}
 

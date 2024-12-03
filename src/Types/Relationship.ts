@@ -4,4 +4,5 @@ export interface Relationship {
     id: number;
     name: string;
     entities: [Entity, Entity];
+    relationship_type: '1-1' | '1-N' | 'N-1' | 'N-N'; 
 }
