@@ -138,10 +138,14 @@
         if (!isDragging) return;
         const deltaX = (event.clientX - dragStartX) / scale;
         const deltaY = (event.clientY - dragStartY) / scale;
+        
         relationship.diamondOffsetX = (relationship.diamondOffsetX || 0) + deltaX;
         relationship.diamondOffsetY = (relationship.diamondOffsetY || 0) + deltaY;
+        
         dragStartX = event.clientX;
         dragStartY = event.clientY;
+        
+        dispatch('update', { relationship });
     }
 
     function handleDiamondMouseUp() {
@@ -165,7 +169,7 @@
     class:selected={isSelected}
     width={window.innerWidth} 
     height={window.innerHeight} 
-    style="position: fixed; top: 0; left: 0; pointer-events: none;"
+    style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1"
     on:click={handleClick}
 >
     {#if entity1.isWeak}
@@ -319,6 +323,7 @@
     line, path, polygon {
         pointer-events: all;
         cursor: pointer;
+        z-index: 1;
     }
 
     .multiplicity {

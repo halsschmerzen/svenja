@@ -73,7 +73,15 @@
         y: connectionStart.y + attribute.y * scale
     };
 
-    $: connectionPath = `M ${connectionStart.x} ${connectionStart.y} L ${attributePosition.x} ${attributePosition.y}`;
+    const attributeWidth = 90;
+    const attributeHeight = 40;
+
+    $: attributeCenter = {
+        x: attributePosition.x + (attributeWidth / 2) * scale,
+        y: attributePosition.y + (attributeHeight / 2) * scale
+    };
+
+    $: connectionPath = `M ${connectionStart.x} ${connectionStart.y} L ${attributeCenter.x} ${attributeCenter.y}`;
 </script>
 
 <svelte:window

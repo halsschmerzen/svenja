@@ -332,6 +332,15 @@
         selectedRelationship = null;
     }
 
+    function handleRelationshipUpdate(event: CustomEvent) {
+        const updatedRelationship = event.detail.relationship;
+        const index = relationships.findIndex(r => r.id === updatedRelationship.id);
+        if (index !== -1) {
+            Object.assign(relationships[index], updatedRelationship);
+            relationships = [...relationships];
+        }
+    }
+
 </script>
 
 <svelte:window
@@ -388,6 +397,7 @@
         {offsetY}
         isSelected={selectedRelationship?.id === relationship.id}
         on:updateType={handleRelationshipTypeUpdate}
+        on:update={handleRelationshipUpdate}
         on:select={handleRelationshipSelect}
         on:deselect={handleRelationshipDeselect}
     />
