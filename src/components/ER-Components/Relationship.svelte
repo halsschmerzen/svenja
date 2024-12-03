@@ -8,6 +8,7 @@
     export let scale = 1;
     export let offsetX = 0;
     export let offsetY = 0;
+    export let isSelected = false;
 
     $: entity1 = relationship.entities[0];
     $: entity2 = relationship.entities[1];
@@ -95,15 +96,30 @@
     $: labelEndX = toOptionalX; 
     $: labelEndY = toOptionalY - 15;
 
-
+    function handleClick(event: MouseEvent) {
+        if (!(event.target instanceof SVGLineElement || 
+              event.target instanceof SVGPathElement || 
+              event.target instanceof SVGPolygonElement)) {
+            return;
+        }
+        
+        event.stopPropagation();
+        if (!isSelected) {
+            dispatch('select', { relationship });
+        } else {
+            dispatch('deselect');
+        }
+    }
     
 </script>
 
 <svg 
     class="relationship-line" 
+    class:selected={isSelected}
     width={window.innerWidth} 
     height={window.innerHeight} 
     style="position: fixed; top: 0; left: 0; pointer-events: none;"
+    on:click={handleClick}
 >
     {#if entity1.isWeak}
         {@const lines = getParallelLines(entity1CenterX, entity1CenterY, midX, midY)}
@@ -248,8 +264,12 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        pointer-events: none; 
         z-index: 0; 
+    }
+
+    line, path, polygon {
+        pointer-events: all;
+        cursor: pointer;
     }
 
     .multiplicity {
@@ -293,5 +313,14 @@
     circle {
         cursor: pointer;
         pointer-events: all;
+    }
+
+    .selected line,
+    .selected path {
+        stroke: rgba(255, 0, 0, 0.8);
+    }
+
+    .selected polygon {
+        stroke: rgba(255, 0, 0, 0.8);
     }
 </style>

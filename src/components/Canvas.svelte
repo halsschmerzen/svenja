@@ -23,6 +23,7 @@
     let lastX = 0;
     let lastY = 0;
     let selectedEntity: EntityType | null = null;
+    let selectedRelationship: RelationshipType | null = null;
     const cellSize = 30;
     const minScale = 0.75;
     const maxScale = 5;
@@ -254,10 +255,12 @@
             console.log(relationships)
         }
         selectedEntity = null;
+        handleRelationshipDeselect();
     }
 
     function handleEntitySelect(event: CustomEvent) {
         const entity = event.detail.entity;
+        handleRelationshipDeselect();
         if (isRelationshipMode) {
             selectedEntities.push(entity);
             if (selectedEntities.length === 2) {
@@ -302,6 +305,15 @@
             relationships[index].relationship_type = updatedRelationship.relationship_type;
             relationships = [...relationships]; 
         }
+    }
+
+    function handleRelationshipSelect(event: CustomEvent) {
+        selectedEntity = null;
+        selectedRelationship = event.detail.relationship;
+    }
+
+    function handleRelationshipDeselect() {
+        selectedRelationship = null;
     }
 
 </script>
@@ -357,7 +369,10 @@
         {scale}
         {offsetX}
         {offsetY}
+        isSelected={selectedRelationship?.id === relationship.id}
         on:updateType={handleRelationshipTypeUpdate}
+        on:select={handleRelationshipSelect}
+        on:deselect={handleRelationshipDeselect}
     />
 {/each}
 
@@ -371,6 +386,7 @@
 <Sidebar 
     isOpen={isSidebarOpen}
     {selectedEntity}
+    {selectedRelationship}
 />
 
 <canvas

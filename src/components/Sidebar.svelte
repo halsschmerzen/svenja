@@ -1,7 +1,9 @@
 <script lang="ts">
     import type { Entity as EntityType } from '../Types/Entity';
+    import type { Relationship as RelationshipType } from '../Types/Relationship';
     
     export let selectedEntity: EntityType | null;
+    export let selectedRelationship: RelationshipType | null;
     export let isOpen: boolean;
 </script>
 
@@ -25,8 +27,39 @@
                     <li>{attr.name}</li>
                 {/each}
             </ul>
+        {:else if selectedRelationship}
+            <h2>Relationship</h2>
+            <div class="properties">
+                <label>
+                    Name:
+                    <input type="text" bind:value={selectedRelationship.name}>
+                </label>
+                <label>
+                    Type:
+                    <select bind:value={selectedRelationship.relationship_type}>
+                        <option value="1-1">One to One</option>
+                        <option value="1-N">One to Many</option>
+                        <option value="N-1">Many to One</option>
+                        <option value="N-N">Many to Many</option>
+                    </select>
+                </label>
+                <label>
+                    From Entity:
+                    <select bind:value={selectedRelationship.from_entity}>
+                        <option value="can">Optional</option>
+                        <option value="must">Mandatory</option>
+                    </select>
+                </label>
+                <label>
+                    To Entity:
+                    <select bind:value={selectedRelationship.to_entity}>
+                        <option value="can">Optional</option>
+                        <option value="must">Mandatory</option>
+                    </select>
+                </label>
+            </div>
         {:else}
-            <p>No entity selected</p>
+            <p>No item selected</p>
         {/if}
     </div>
 </div>
