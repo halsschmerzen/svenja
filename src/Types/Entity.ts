@@ -1,4 +1,5 @@
 import type { Attribute } from "./Attribute";
+import type { Relationship } from "./Relationship";
 
 export interface Entity {
     id: number;
@@ -7,5 +8,6 @@ export interface Entity {
     y: number;
     isWeak: boolean;
     attributes: Attribute[];
+    relationships: Relationship[];
 }
 

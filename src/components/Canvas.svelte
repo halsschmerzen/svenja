@@ -8,6 +8,8 @@
     import Attribute from "./ER-Components/Attribute.svelte";
     import Sidebar from "./Sidebar.svelte";
     import { theme } from '../stores/theme';
+    import Relationship from "./ER-Components/Relationship.svelte";
+    import type { Relationship as RelationshipType } from "../Types/Relationship";
 
     let canvas: HTMLCanvasElement;
     let width = window.innerWidth;
@@ -24,6 +26,10 @@
     const cellSize = 30;
     const minScale = 1;
     const maxScale = 5;
+    let isRelationshipMode = false;
+    let selectedEntities: EntityType[] = [];
+    let relationships: RelationshipType[] = [];
+    let relationshipModeIndicator = '';
 
     let entities: EntityType[] = [
         {
@@ -32,7 +38,8 @@
             x: 100,
             y: 100,
             isWeak: false,
-            attributes: []
+            attributes: [],
+            relationships: []
         }
     ];
 
@@ -229,7 +236,59 @@
         updateOnce();
     }
 
-    
+    function handleAddRelationship() {
+        isRelationshipMode = true;
+        selectedEntities = [];
+        relationshipModeIndicator = 'Relationship Mode: Select two entities.';
+        canvas.style.cursor = 'crosshair';
+    }
+
+    function handleCanvasClick() {
+        if (isRelationshipMode) {
+            isRelationshipMode = false;
+            selectedEntities = [];
+            relationshipModeIndicator = '';
+            canvas.style.cursor = 'default';
+            console.log(relationships)
+        }
+        selectedEntity = null;
+    }
+
+    function handleEntitySelect(event: CustomEvent) {
+        const entity = event.detail.entity;
+        if (isRelationshipMode) {
+            selectedEntities.push(entity);
+            if (selectedEntities.length === 2) {
+                const newRelationship: RelationshipType = {
+                    id: relationships.length + 1,
+                    name: "has",
+                    entities: [selectedEntities[0], selectedEntities[1]]
+                };
+                relationships = [...relationships, newRelationship];
+                selectedEntities = [];
+                isRelationshipMode = false;
+                relationshipModeIndicator = '';
+                canvas.style.cursor = 'default';
+            }
+        } else {
+            selectedEntity = entity;
+        }
+    }
+
+    function handleEntityUpdate(event: CustomEvent) {
+        const updatedEntity: EntityType = event.detail.entity;
+        const index = entities.findIndex(e => e.id === updatedEntity.id);
+        if (index !== -1) {
+            entities[index].x = updatedEntity.x;
+            entities[index].y = updatedEntity.y;
+            entities = [...entities];
+            relationships = [...relationships];
+        }
+    }
+
+    function handleEntityDeselect() {
+        selectedEntity = null;
+    }
 
 </script>
 
@@ -246,11 +305,15 @@
     on:toggleGrid={toggleGrid} 
     on:addAttribute={handleAddAttribute}
     on:toggleTheme={toggleCanvasTheme}
+    on:addRelationship={handleAddRelationship}
     {selectedEntity}
 />
 
-
-
+{#if isRelationshipMode}
+    <div class="relationship-mode-indicator">
+        {relationshipModeIndicator}
+    </div>
+{/if}
 
 {#each entities as entity (entity.id)}
     <Entity
@@ -259,8 +322,9 @@
         {offsetX}
         {offsetY}
         isSelected={selectedEntity?.id === entity.id}
-        onSelect={() => selectedEntity = entity}
-        onDeselect={() => selectedEntity = null}
+        on:select={handleEntitySelect}
+        on:deselect={handleEntityDeselect}
+        on:update={handleEntityUpdate}
     />
     {#each entity.attributes as attribute (attribute.id)}
         <Attribute
@@ -271,6 +335,15 @@
         />
     {/each}
 
+{/each}
+
+{#each relationships as relationship (relationship.id)}
+    <Relationship
+        {relationship}
+        {scale}
+        {offsetX}
+        {offsetY}
+    />
 {/each}
 
 <button 
@@ -291,9 +364,8 @@
     height={height}
     on:wheel={handleWheel}
     on:mousedown={handleMouseDown}
-    on:click={() => selectedEntity = null}
+    on:click={handleCanvasClick}
 />
-
 
 <style>
     canvas {
@@ -314,5 +386,17 @@
         border-right: none;
         border-radius: 4px 0 0 4px;
         cursor: pointer;
+    }
+    .relationship-mode-indicator {
+        position: fixed;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        z-index: 1001;
+        font-size: 14px;
     }
 </style>

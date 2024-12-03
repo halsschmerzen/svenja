@@ -1,10 +1,8 @@
 <script lang="ts">
     import type { Entity as EntityType } from "../../Types/Entity";
+    import { createEventDispatcher } from 'svelte';
     
     export let isSelected = false;
-    export let onSelect: () => void;
-    export let onDeselect: () => void;
-
     export let entity: EntityType;
     export let scale = 1;
     export let offsetX = 0;
@@ -13,6 +11,8 @@
     let isDragging = false;
     let startX: number;
     let startY: number;
+
+    const dispatch = createEventDispatcher();
 
     function handleMouseDown(event: MouseEvent) {
         isDragging = true;
@@ -24,6 +24,8 @@
         if(!isDragging) return;
         entity.x = (event.clientX - startX - offsetX) / scale;
         entity.y = (event.clientY - startY - offsetY) / scale;
+        
+        dispatch('update', { entity });
     }
 
     function handleMouseUp() {
@@ -33,13 +35,11 @@
     function handleClick(event: MouseEvent) {
         event.stopPropagation();
         if (!isSelected) {
-            onSelect();
+            dispatch('select', { entity });
         } else {
-            onDeselect();
+            dispatch('deselect');
         }
     }
-
-
 </script>
 
 <svelte:window

@@ -24,6 +24,10 @@
         dispatch('toggleTheme')
     }
 
+    function handleAddRelationship() {
+        dispatch('addRelationship');
+    }
+
 </script>
 
 <div class="toolbar">
@@ -33,6 +37,7 @@
     <button on:click={handleAddEntity}>Entity</button>
     <button on:click={handleGridToggle}>Toggle Grid</button>
     <button on:click={handleToggleTheme}>Toggle Theme</button>
+    <button on:click={handleAddRelationship}>Add Relationship</button>
     {#if selectedEntity}
         <button on:click={handleAddAttribute}>Add Attribute</button>
     {/if}
