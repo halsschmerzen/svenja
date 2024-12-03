@@ -421,7 +421,7 @@
             {scale}
             {offsetX}
             {offsetY}
-            isSelected={selectedAttribute?.id === attribute.id}
+            isSelected={selectedAttribute === attribute}
             on:select={handleAttributeSelect}
             on:deselect={handleAttributeDeselect}
             on:update={handleAttributeUpdate}
@@ -448,7 +448,7 @@
             {scale}
             {offsetX}
             {offsetY}
-            isSelected={selectedAttribute?.id === attribute.id}
+            isSelected={selectedAttribute === attribute}
             on:select={handleAttributeSelect}
             on:deselect={handleAttributeDeselect}
             on:update={handleAttributeUpdate}

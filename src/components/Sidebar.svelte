@@ -104,20 +104,27 @@
                         on:input={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
                     >
                 </label>
-                <label>
-                    Primary Key:
-                    <input 
-                        type="checkbox" 
-                        bind:checked={selectedAttribute.isPrimary}
-                        on:change={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
-                    >
-                </label>
+                {#if !('entities' in selectedAttribute.connectedTo)}
+                    <label>
+                        Primary Key:
+                        <input 
+                            type="checkbox" 
+                            bind:checked={selectedAttribute.isPrimary}
+                            on:change={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
+                        >
+                    </label>
+                {/if}
                 <label>
                     Multi-value:
                     <input 
                         type="checkbox" 
                         bind:checked={selectedAttribute.isMultivalue}
-                        on:change={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
+                        on:change={() => {
+                            if (selectedAttribute.isMultivalue) {
+                                selectedAttribute.isCalculated = false;
+                            }
+                            dispatch('attributeUpdate', { attribute: selectedAttribute });
+                        }}
                     >
                 </label>
                 <label>
@@ -125,7 +132,12 @@
                     <input 
                         type="checkbox" 
                         bind:checked={selectedAttribute.isCalculated}
-                        on:change={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
+                        on:change={() => {
+                            if (selectedAttribute.isCalculated) {
+                                selectedAttribute.isMultivalue = false;
+                            }
+                            dispatch('attributeUpdate', { attribute: selectedAttribute });
+                        }}
                     >
                 </label>
             </div>

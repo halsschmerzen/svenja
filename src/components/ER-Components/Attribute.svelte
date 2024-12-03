@@ -95,6 +95,25 @@
     };
 
     $: connectionPath = `M ${connectionStart.x} ${connectionStart.y} L ${attributeCenter.x} ${attributeCenter.y}`;
+
+    function getParallelLines(x1: number, y1: number, x2: number, y2: number, gap = 3) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        
+        const perpX = -dy / length * gap;
+        const perpY = dx / length * gap;
+
+        const line1Start = `${x1 + perpX},${y1 + perpY}`;
+        const line1End = `${x2 + perpX},${y2 + perpY}`;
+        const line2Start = `${x1 - perpX},${y1 - perpY}`;
+        const line2End = `${x2 - perpX},${y2 - perpY}`;
+        
+        return {
+            line1: `M ${line1Start} L ${line1End}`,
+            line2: `M ${line2Start} L ${line2End}`
+        };
+    }
 </script>
 
 <svelte:window
@@ -108,13 +127,32 @@
     height={window.innerHeight} 
     style="position: fixed; top: 0; left: 0; pointer-events: none;"
 >
-    <path 
-        d={connectionPath} 
-        stroke="var(--text-color)" 
-        stroke-width="2" 
-        fill="none"
-        vector-effect="non-scaling-stroke"
-    />
+    {#if attribute.isMultivalue}
+        {@const lines = getParallelLines(connectionStart.x, connectionStart.y, attributeCenter.x, attributeCenter.y)}
+        <path 
+            d={lines.line1} 
+            stroke="var(--text-color)" 
+            stroke-width="2" 
+            fill="none"
+            vector-effect="non-scaling-stroke"
+        />
+        <path 
+            d={lines.line2} 
+            stroke="var(--text-color)" 
+            stroke-width="2" 
+            fill="none"
+            vector-effect="non-scaling-stroke"
+        />
+    {:else}
+        <path 
+            d={connectionPath} 
+            stroke="var(--text-color)" 
+            stroke-width="2" 
+            stroke-dasharray={attribute.isCalculated ? "5,5" : "none"}
+            fill="none"
+            vector-effect="non-scaling-stroke"
+        />
+    {/if}
 </svg>
 
 <div class="attribute"
@@ -129,7 +167,7 @@
     on:mousedown={handleMouseDown}
     on:click={handleClick}
 >
-    <div class="name">{attribute.name}</div>
+    <div class="name" class:primary-text={attribute.isPrimary}>{attribute.name}</div>
 </div>
 
 <style>
@@ -157,21 +195,6 @@
         pointer-events: none; 
         z-index: 0; 
     }
-
-    .primary {
-        border-width: 2px;
-        border-color: #333;
-        font-weight: bold;
-    }
-
-    .multivalue {
-        border-style: double;
-    }
-
-    .calculated {
-        border-style: dashed;
-    }
-
     .selected {
         outline: 2px solid green;
     }
@@ -180,5 +203,9 @@
         font-family: monospace;
         font-size: 12px;
         color: var(--text-color);
+    }
+
+    .primary-text {
+        text-decoration: underline;
     }
 </style>
