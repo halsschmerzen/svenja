@@ -19,6 +19,27 @@
     $: if (selectedAttribute) {
         dispatch('attributeUpdate', { attribute: selectedAttribute });
     }
+
+    function handleAttributeClick(attribute: AttributeType) {
+        selectedEntity = null;
+        selectedRelationship = null;
+        selectedAttribute = attribute;
+    }
+
+    function handleParentClick() {
+        const parent = selectedAttribute?.connectedTo;
+        if (!parent) return;
+
+        if ('entities' in parent) {
+            selectedAttribute = null;
+            selectedEntity = null;
+            selectedRelationship = parent;
+        } else {
+            selectedAttribute = null;
+            selectedRelationship = null;
+            selectedEntity = parent;
+        }
+    }
 </script>
 
 <div class="sidebar" class:open={isOpen}>
@@ -46,7 +67,13 @@
             <h3>Attributes ({selectedEntity.attributes.length})</h3>
             <ul>
                 {#each selectedEntity.attributes as attr}
-                    <li>{attr.name}</li>
+                    <li 
+                        class="clickable-attribute"
+                        class:selected={selectedAttribute === attr}
+                        on:click={() => handleAttributeClick(attr)}
+                    >
+                        {attr.name}
+                    </li>
                 {/each}
             </ul>
         {:else if selectedRelationship}
@@ -89,13 +116,33 @@
                 <h3>Attributes ({selectedRelationship.attributes.length})</h3>
                 <ul>
                     {#each selectedRelationship.attributes as attr}
-                        <li>{attr.name}</li>
+                        <li 
+                            class="clickable-attribute"
+                            class:selected={selectedAttribute === attr}
+                            on:click={() => handleAttributeClick(attr)}
+                        >
+                            {attr.name}
+                        </li>
                     {/each}
                 </ul>
             </div>
         {:else if selectedAttribute}
             <h2>Attribute</h2>
             <div class="properties">
+                <div class="parent-info">
+                    Connected to:
+                    <span 
+                        class="clickable-parent"
+                        on:click={handleParentClick}
+                    >
+                        {
+                            'entities' in selectedAttribute.connectedTo 
+                                ? `Relationship: ${selectedAttribute.connectedTo.name}` 
+                                : `Entity: ${selectedAttribute.connectedTo.name}`
+                        }
+                    </span>
+                </div>
+
                 <label>
                     Name:
                     <input 
@@ -186,5 +233,37 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+
+    .clickable-attribute {
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .clickable-attribute:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .clickable-attribute.selected {
+        background-color: rgba(0, 128, 0, 0.2);
+    }
+
+    .parent-info {
+        padding: 8px;
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    .clickable-parent {
+        color: var(--text-color);
+        text-decoration: underline;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .clickable-parent:hover {
+        opacity: 0.8;
     }
 </style>
