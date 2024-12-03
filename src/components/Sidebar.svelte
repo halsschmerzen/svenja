@@ -47,14 +47,14 @@
                     From Entity:
                     <select bind:value={selectedRelationship.from_entity}>
                         <option value="can">Optional</option>
-                        <option value="must">Mandatory</option>
+                        <option value="must">Must</option>
                     </select>
                 </label>
                 <label>
                     To Entity:
                     <select bind:value={selectedRelationship.to_entity}>
-                        <option value="can">Optional</option>
-                        <option value="must">Mandatory</option>
+                        <option value="can">Can</option>
+                        <option value="must">Must</option>
                     </select>
                 </label>
             </div>

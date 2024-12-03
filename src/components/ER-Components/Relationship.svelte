@@ -23,10 +23,10 @@
 
     const diamondSize = 40; 
     $: diamondPoints = `
-        ${midX},${midY - diamondSize / 2} 
-        ${midX + diamondSize / 2},${midY} 
-        ${midX},${midY + diamondSize / 2} 
-        ${midX - diamondSize / 2},${midY}
+        ${actualMidX},${actualMidY - diamondSize / 2} 
+        ${actualMidX + diamondSize / 2},${actualMidY} 
+        ${actualMidX},${actualMidY + diamondSize / 2} 
+        ${actualMidX - diamondSize / 2},${actualMidY}
     `;
 
     function toggleMultiplicity(end: 'start' | 'end') {
@@ -85,11 +85,10 @@
     $: angle = Math.atan2(entity2CenterY - entity1CenterY, entity2CenterX - entity1CenterX);
     $: offset = 70;
 
-    $: fromOptionalX = entity1CenterX + offset * Math.cos(angle);
-    $: fromOptionalY = entity1CenterY + offset * Math.sin(angle);
-    $: toOptionalX = entity2CenterX - offset * Math.cos(angle);
-    $: toOptionalY = entity2CenterY - offset * Math.sin(angle);
-
+    $: fromOptionalX = entity1CenterX + (actualMidX - entity1CenterX) * 0.3;
+    $: fromOptionalY = entity1CenterY + (actualMidY - entity1CenterY) * 0.3;
+    $: toOptionalX = entity2CenterX + (actualMidX - entity2CenterX) * 0.3;
+    $: toOptionalY = entity2CenterY + (actualMidY - entity2CenterY) * 0.3;
 
     $: labelStartX = fromOptionalX;
     $: labelStartY = fromOptionalY - 15;
@@ -99,7 +98,15 @@
     function handleClick(event: MouseEvent) {
         if (!(event.target instanceof SVGLineElement || 
               event.target instanceof SVGPathElement || 
-              event.target instanceof SVGPolygonElement)) {
+              event.target instanceof SVGPolygonElement ||
+              event.target instanceof SVGTextElement ||
+              event.target instanceof SVGRectElement ||
+              event.target instanceof SVGGElement)) {
+            return;
+        }
+
+        if ((event.target as SVGElement).closest('.multiplicity') || 
+            (event.target as SVGElement).closest('.optional-indicator')) {
             return;
         }
         
@@ -110,8 +117,42 @@
             dispatch('deselect');
         }
     }
+
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let diamondOffsetX = 0;
+    let diamondOffsetY = 0;
+
+    $: actualMidX = midX + diamondOffsetX * scale;
+    $: actualMidY = midY + diamondOffsetY * scale;
+
+    function handleDiamondMouseDown(event: MouseEvent) {
+        if (event.target instanceof SVGPolygonElement) {
+            isDragging = true;
+            dragStartX = event.clientX - diamondOffsetX * scale;
+            dragStartY = event.clientY - diamondOffsetY * scale;
+            event.stopPropagation();
+        }
+    }
+
+    function handleDiamondMouseMove(event: MouseEvent) {
+        if (!isDragging) return;
+        diamondOffsetX = (event.clientX - dragStartX) / scale;
+        diamondOffsetY = (event.clientY - dragStartY) / scale;
+        event.stopPropagation();
+    }
+
+    function handleDiamondMouseUp() {
+        isDragging = false;
+    }
     
 </script>
+
+<svelte:window
+    on:mousemove={handleDiamondMouseMove}
+    on:mouseup={handleDiamondMouseUp}
+/>
 
 <svg 
     class="relationship-line" 
@@ -122,13 +163,13 @@
     on:click={handleClick}
 >
     {#if entity1.isWeak}
-        {@const lines = getParallelLines(entity1CenterX, entity1CenterY, midX, midY)}
+        {@const lines = getParallelLines(entity1CenterX, entity1CenterY, actualMidX, actualMidY)}
         <path d={lines.line1} stroke="#333" stroke-width="2" vector-effect="non-scaling-stroke"/>
         <path d={lines.line2} stroke="#333" stroke-width="2" vector-effect="non-scaling-stroke"/>
     {:else}
         <line 
-            x1={midX} 
-            y1={midY} 
+            x1={actualMidX} 
+            y1={actualMidY} 
             x2={entity1CenterX} 
             y2={entity1CenterY} 
             stroke="#333" 
@@ -138,13 +179,13 @@
     {/if}
 
     {#if entity2.isWeak}
-        {@const lines = getParallelLines(entity2CenterX, entity2CenterY, midX, midY)}
+        {@const lines = getParallelLines(entity2CenterX, entity2CenterY, actualMidX, actualMidY)}
         <path d={lines.line1} stroke="#333" stroke-width="2" vector-effect="non-scaling-stroke"/>
         <path d={lines.line2} stroke="#333" stroke-width="2" vector-effect="non-scaling-stroke"/>
     {:else}
         <line 
-            x1={midX} 
-            y1={midY} 
+            x1={actualMidX} 
+            y1={actualMidY} 
             x2={entity2CenterX} 
             y2={entity2CenterY} 
             stroke="#333" 
@@ -158,6 +199,7 @@
         fill="white" 
         stroke="#333" 
         stroke-width="2"
+        on:mousedown={handleDiamondMouseDown}
     />
 
     <g class="multiplicity" on:click={() => toggleMultiplicity('start')}>
@@ -250,11 +292,12 @@
     </g>
 
     <text 
-        x={midX} 
-        y={midY + 5} 
+        x={actualMidX} 
+        y={actualMidY + 5} 
         text-anchor="middle" 
         font-size="14"
         fill="black"
+        class="relationship-name"
     >
         {relationship.name || 'has'}
     </text>
@@ -306,6 +349,10 @@
         user-select: none;
     }
 
+    .relationship-name {
+        pointer-events: none;
+    }
+
     rect {
         pointer-events: all; 
     }
@@ -322,5 +369,9 @@
 
     .selected polygon {
         stroke: rgba(255, 0, 0, 0.8);
+    }
+
+    polygon {
+        cursor: move;
     }
 </style>
