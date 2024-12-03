@@ -1,10 +1,20 @@
 <script lang="ts">
+    import { createEventDispatcher } from 'svelte';
     import type { Entity as EntityType } from '../Types/Entity';
     import type { Relationship as RelationshipType } from '../Types/Relationship';
     
     export let selectedEntity: EntityType | null;
     export let selectedRelationship: RelationshipType | null;
     export let isOpen: boolean;
+
+    const dispatch = createEventDispatcher();
+
+    $: if (selectedEntity) {
+        dispatch('entityUpdate', { entity: selectedEntity });
+    }
+    $: if (selectedRelationship) {
+        dispatch('relationshipUpdate', { relationship: selectedRelationship });
+    }
 </script>
 
 <div class="sidebar" class:open={isOpen}>
@@ -14,11 +24,19 @@
             <div class="properties">
                 <label>
                     Name:
-                    <input type="text" bind:value={selectedEntity.name}>
+                    <input 
+                        type="text" 
+                        bind:value={selectedEntity.name}
+                        on:input={() => dispatch('entityUpdate', { entity: selectedEntity })}
+                    >
                 </label>
                 <label>
                     Weak Entity:
-                    <input type="checkbox" bind:checked={selectedEntity.isWeak}>
+                    <input 
+                        type="checkbox" 
+                        bind:checked={selectedEntity.isWeak}
+                        on:change={() => dispatch('entityUpdate', { entity: selectedEntity })}
+                    >
                 </label>
             </div>
             <h3>Attributes ({selectedEntity.attributes.length})</h3>
@@ -32,11 +50,18 @@
             <div class="properties">
                 <label>
                     Name:
-                    <input type="text" bind:value={selectedRelationship.name}>
+                    <input 
+                        type="text" 
+                        bind:value={selectedRelationship.name}
+                        on:input={() => dispatch('relationshipUpdate', { relationship: selectedRelationship })}
+                    >
                 </label>
                 <label>
                     Type:
-                    <select bind:value={selectedRelationship.relationship_type}>
+                    <select 
+                        bind:value={selectedRelationship.relationship_type}
+                        on:change={() => dispatch('relationshipUpdate', { relationship: selectedRelationship })}
+                    >
                         <option value="1-1">One to One</option>
                         <option value="1-N">One to Many</option>
                         <option value="N-1">Many to One</option>
@@ -46,7 +71,7 @@
                 <label>
                     From Entity:
                     <select bind:value={selectedRelationship.from_entity}>
-                        <option value="can">Optional</option>
+                        <option value="can">Can</option>
                         <option value="must">Must</option>
                     </select>
                 </label>

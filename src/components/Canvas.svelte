@@ -280,6 +280,7 @@
             }
         } else {
             selectedEntity = entity;
+            isSidebarOpen = true;
         }
     }
 
@@ -310,6 +311,7 @@
     function handleRelationshipSelect(event: CustomEvent) {
         selectedEntity = null;
         selectedRelationship = event.detail.relationship;
+        isSidebarOpen = true;
     }
 
     function handleRelationshipDeselect() {
@@ -384,9 +386,23 @@
 </button>
 
 <Sidebar 
-    isOpen={isSidebarOpen}
-    {selectedEntity}
-    {selectedRelationship}
+    bind:isOpen={isSidebarOpen}
+    bind:selectedEntity
+    bind:selectedRelationship
+    on:entityUpdate={({detail}) => {
+        const index = entities.findIndex(e => e.id === detail.entity.id);
+        if (index !== -1) {
+            entities[index] = detail.entity;
+            entities = [...entities];
+        }
+    }}
+    on:relationshipUpdate={({detail}) => {
+        const index = relationships.findIndex(r => r.id === detail.relationship.id);
+        if (index !== -1) {
+            relationships[index] = detail.relationship;
+            relationships = [...relationships];
+        }
+    }}
 />
 
 <canvas
