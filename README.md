@@ -1,47 +1,110 @@
-# Svelte + TS + Vite
+```markdown
+# ER Diagram Tool
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+An interactive Entity-Relationship (ER) diagramming tool built with Svelte. This application allows users to create and manipulate entities, attributes, and relationships visually on a canvas, facilitating the design of database schemas.
 
-## Recommended IDE Setup
+## Features
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+- **Entities**
+  - ✅ Create entities via the toolbar
+  - ✅ Drag and reposition entities on the canvas
+  - ✅ Select entities by clicking
+  - ✅ Support for weak entities
 
-## Need an official Svelte framework?
+- **Attributes**
+  - ✅ Add attributes to selected entities
+  - ✅ Drag and reposition attributes connected to entities
+  - ✅ Support for primary, multivalued, and calculated attributes
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+- **Relationships**
+  - ✅ Enter relationship mode to select two entities and create a relationship
+  - ✅ Display relationships as lines connecting entities
+  - ✅ Represent relationships with diamonds on the canvas
+  - ✅ Adjust relationship multiplicity (`1-1`, `1-N`, `N-1`, `N-N`)
+  - ✅ Relationships have editable names
 
-## Technical considerations
+- **Canvas Interactions**
+  - ✅ Pan the canvas by dragging
+  - ✅ Zoom in and out with the mouse wheel
+  - ✅ Toggle grid display
 
-**Why use this over SvelteKit?**
+- **Toolbar Actions**
+  - ✅ Reset the view
+  - ✅ Add new entities
+  - ✅ Add new relationships
+  - ✅ Toggle grid visibility
+  - ✅ Toggle theme (light/dark mode)
+  - ✅ Add attributes to selected entities
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+- **Other Features**
+  - ❌ Deleting entities, attributes, or relationships
+  - ❌ Editing names directly on the canvas
+  - ❌ Saving and loading diagrams
+  - ❌ Exporting diagrams to image or code formats
+  - ❌ Undo and redo functionality
+  - ❌ Error handling and validations
+  - ❌ Multiple relationship types beyond binary
+  - ❌ Multi-user collaboration
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+## Project Summary
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+This ER Diagram Tool is designed to help users create and visualize database schemas through an intuitive graphical interface. Users can:
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+- **Create Entities:** Add entities to the canvas and position them as needed.
+- **Add Attributes:** Assign attributes to entities, supporting various attribute types.
+- **Define Relationships:** Establish relationships between entities by entering relationship mode and selecting entities to connect.
+- **Interact with the Canvas:** Navigate the canvas with pan and zoom features, and toggle a grid for alignment assistance.
+- **Customize Appearance:** Switch between light and dark themes to suit your preferences.
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+The project's modular structure with Svelte components ensures maintainability and scalability, making it easy to extend functionality in the future.
 
-**Why include `.vscode/extensions.json`?**
+## Installation
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+Follow these steps to set up and run the project locally:
 
-**Why enable `allowJs` in the TS template?**
+1. **Clone the Repository**
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
+   ```bash
+   git clone https://github.com/halsschmerzen/svenja.git
+   ```
 
-**Why is HMR not preserving my local component state?**
+2. **Navigate to the Project Directory**
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+   ```bash
+   cd svenja
+   ```
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+3. **Install Dependencies**
 
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+   Make sure you have [Node.js](https://nodejs.org/en/) installed, then run:
+
+   ```bash
+   npm install
+   ```
+
+4. **Run the Development Server**
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Open the Application**
+
+   Open your web browser and navigate to `http://localhost:5173` to use the ER Diagram Tool Svenja.
+
+## Technologies Used
+
+- **Svelte:** For building reactive user interfaces.
+- **TypeScript:** Providing type safety and enhanced IDE support.
+- **HTML5 Canvas:** Rendering the interactive canvas elements.
+- **CSS:** Styling the application components.
+
+## Contributing
+
+Contributions are welcome! Feel free to submit issues or pull requests to enhance the functionality of the ER Diagram Tool.
+
+## License
+
+This project is licensed under the MIT License.
+
 ```
