@@ -1,5 +1,5 @@
 ```markdown
-# ER Diagram Tool
+# svenja
 
 An interactive Entity-Relationship (ER) diagramming tool built with Svelte. This application allows users to create and manipulate entities, attributes, and relationships visually on a canvas, facilitating the design of database schemas.
 
