@@ -121,30 +121,36 @@
     let isDragging = false;
     let dragStartX = 0;
     let dragStartY = 0;
-    let diamondOffsetX = 0;
-    let diamondOffsetY = 0;
 
-    $: actualMidX = midX + diamondOffsetX * scale;
-    $: actualMidY = midY + diamondOffsetY * scale;
+    $: actualMidX = midX + (relationship.diamondOffsetX || 0) * scale;
+    $: actualMidY = midY + (relationship.diamondOffsetY || 0) * scale;
 
     function handleDiamondMouseDown(event: MouseEvent) {
         if (event.target instanceof SVGPolygonElement) {
             isDragging = true;
-            dragStartX = event.clientX - diamondOffsetX * scale;
-            dragStartY = event.clientY - diamondOffsetY * scale;
+            dragStartX = event.clientX;
+            dragStartY = event.clientY;
             event.stopPropagation();
         }
     }
 
     function handleDiamondMouseMove(event: MouseEvent) {
         if (!isDragging) return;
-        diamondOffsetX = (event.clientX - dragStartX) / scale;
-        diamondOffsetY = (event.clientY - dragStartY) / scale;
-        event.stopPropagation();
+        const deltaX = (event.clientX - dragStartX) / scale;
+        const deltaY = (event.clientY - dragStartY) / scale;
+        relationship.diamondOffsetX = (relationship.diamondOffsetX || 0) + deltaX;
+        relationship.diamondOffsetY = (relationship.diamondOffsetY || 0) + deltaY;
+        dragStartX = event.clientX;
+        dragStartY = event.clientY;
     }
 
     function handleDiamondMouseUp() {
         isDragging = false;
+    }
+
+    $: {
+    if (relationship.diamondOffsetX === undefined) relationship.diamondOffsetX = 0;
+    if (relationship.diamondOffsetY === undefined) relationship.diamondOffsetY = 0;
     }
     
 </script>
@@ -196,8 +202,8 @@
 
     <polygon 
         points={diamondPoints} 
-        fill="white" 
-        stroke="#333" 
+        fill="var(--background-color)"
+        stroke="var(--text-color)"
         stroke-width="2"
         on:mousedown={handleDiamondMouseDown}
     />

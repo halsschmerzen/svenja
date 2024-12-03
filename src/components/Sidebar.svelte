@@ -82,6 +82,12 @@
                         <option value="must">Must</option>
                     </select>
                 </label>
+                <h3>Attributes ({selectedRelationship.attributes.length})</h3>
+                <ul>
+                    {#each selectedRelationship.attributes as attr}
+                        <li>{attr.name}</li>
+                    {/each}
+                </ul>
             </div>
         {:else}
             <p>No item selected</p>

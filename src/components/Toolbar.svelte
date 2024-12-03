@@ -1,7 +1,9 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import type { Entity } from "../Types/Entity";
+    import type { Relationship } from "../Types/Relationship";
     export let selectedEntity: Entity | null = null;
+    export let selectedRelationship: Relationship | null = null;
 
     const dispatch = createEventDispatcher();
 
@@ -17,7 +19,9 @@
     }
 
     function handleAddAttribute() {
-        dispatch('addAttribute')
+        if (selectedEntity || selectedRelationship) {
+            dispatch('addAttribute');
+        }
     }
 
     function handleToggleTheme() {
@@ -38,7 +42,7 @@
     <button on:click={handleGridToggle}>Toggle Grid</button>
     <button on:click={handleToggleTheme}>Toggle Theme</button>
     <button on:click={handleAddRelationship}>Add Relationship</button>
-    {#if selectedEntity}
+    {#if selectedEntity || selectedRelationship}
         <button on:click={handleAddAttribute}>Add Attribute</button>
     {/if}
 </div>

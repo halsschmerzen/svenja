@@ -201,18 +201,13 @@
 
     function handleAddAttribute() {
 
-        if(!selectedEntity) {
-            console.log('Nothing selected. How did you even get here?')
-            return;
-        }
-
         if (selectedEntity) {
             const entity = entities.find(e => e.id === selectedEntity.id);
             if (entity) {
                 const newAttribute: AttributeType = {
                     id: entity.attributes.length + 1,
                     name: `Attribute ${entity.attributes.length + 1}`,
-                    x: 200,
+                    x: 100,
                     y: 0,
                     connectedTo: entity,
                     isPrimary: false,
@@ -222,6 +217,24 @@
                 entity.attributes = [...entity.attributes, newAttribute];
             }
         }
+
+        if (selectedRelationship) {
+            const relationship = relationships.find(r => r.id === selectedRelationship.id);
+            if (relationship) {
+                const newAttribute: AttributeType = {
+                    id: relationship.attributes.length + 1,
+                    name: `Attribute ${relationship.attributes.length + 1}`,
+                    x: 200,
+                    y: 0,
+                    connectedTo: relationship, 
+                    isPrimary: false,
+                    isCalculated: false,
+                    isMultivalue: false
+                };
+                relationship.attributes = [...relationship.attributes, newAttribute];
+                relationships = [...relationships];
+            }
+     }
     }
 
     function toggleSidebar() {
@@ -270,7 +283,8 @@
                     entities: [selectedEntities[0], selectedEntities[1]],
                     relationship_type: '1-N',
                     from_entity: 'can', 
-                    to_entity: 'can'     
+                    to_entity: 'can',
+                    attributes: []
                 };
                 relationships = [...relationships, newRelationship];
                 selectedEntities = [];
@@ -335,6 +349,7 @@
     on:toggleTheme={toggleCanvasTheme}
     on:addRelationship={handleAddRelationship}
     {selectedEntity}
+    {selectedRelationship}
 />
 
 {#if isRelationshipMode}
@@ -376,6 +391,14 @@
         on:select={handleRelationshipSelect}
         on:deselect={handleRelationshipDeselect}
     />
+    {#each relationship.attributes as attribute (attribute.id)}
+        <Attribute
+            {attribute}
+            {scale}
+            {offsetX}
+            {offsetY}
+        />
+    {/each}
 {/each}
 
 <button 

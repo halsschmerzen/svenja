@@ -7,5 +7,7 @@ export interface Relationship {
     relationship_type: '1-1' | '1-N' | 'N-1' | 'N-N'; 
     from_entity: 'can' | 'must';
     to_entity: 'can' | 'must';
-    attributes: Attribute[]
+    attributes: Attribute[];
+    diamondOffsetX?: number; 
+    diamondOffsetY?: number;
 }
