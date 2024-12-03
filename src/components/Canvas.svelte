@@ -24,7 +24,7 @@
     let lastY = 0;
     let selectedEntity: EntityType | null = null;
     const cellSize = 30;
-    const minScale = 1;
+    const minScale = 0.75;
     const maxScale = 5;
     let isRelationshipMode = false;
     let selectedEntities: EntityType[] = [];
@@ -141,7 +141,8 @@
             x: centerX,
             y: centerY,
             isWeak: false,
-            attributes: []
+            attributes: [],
+            relationships: []
         };
 
         entities = [...entities, newEntity];

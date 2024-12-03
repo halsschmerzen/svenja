@@ -75,7 +75,7 @@
     }
 
     .weak {
-        border-style: dashed;
+        border: 6px double var(--text-color);
     }
 
     .selected {

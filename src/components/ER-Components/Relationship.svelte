@@ -61,6 +61,26 @@
         });
     }
 
+    function getParallelLines(x1: number, y1: number, x2: number, y2: number, gap = 3) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        
+
+        const perpX = -dy / length * gap;
+        const perpY = dx / length * gap;
+
+        const line1Start = `${x1 + perpX},${y1 + perpY}`;
+        const line1End = `${x2 + perpX},${y2 + perpY}`;
+        const line2Start = `${x1 - perpX},${y1 - perpY}`;
+        const line2End = `${x2 - perpX},${y2 - perpY}`;
+        
+        return {
+            line1: `M ${line1Start} L ${line1End}`,
+            line2: `M ${line2Start} L ${line2End}`
+        };
+    }
+
     $: angle = Math.atan2(entity2CenterY - entity1CenterY, entity2CenterX - entity1CenterX);
     $: offset = 70;
 
@@ -75,6 +95,8 @@
     $: labelEndX = toOptionalX; 
     $: labelEndY = toOptionalY - 15;
 
+
+    
 </script>
 
 <svg 
@@ -83,25 +105,37 @@
     height={window.innerHeight} 
     style="position: fixed; top: 0; left: 0; pointer-events: none;"
 >
-    <line 
-        x1={midX} 
-        y1={midY} 
-        x2={entity1CenterX} 
-        y2={entity1CenterY} 
-        stroke="#333" 
-        stroke-width="2" 
-        vector-effect="non-scaling-stroke"
-    />
+    {#if entity1.isWeak}
+        {@const lines = getParallelLines(entity1CenterX, entity1CenterY, midX, midY)}
+        <path d={lines.line1} stroke="#333" stroke-width="2" vector-effect="non-scaling-stroke"/>
+        <path d={lines.line2} stroke="#333" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    {:else}
+        <line 
+            x1={midX} 
+            y1={midY} 
+            x2={entity1CenterX} 
+            y2={entity1CenterY} 
+            stroke="#333" 
+            stroke-width="2" 
+            vector-effect="non-scaling-stroke"
+        />
+    {/if}
 
-    <line 
-        x1={midX} 
-        y1={midY} 
-        x2={entity2CenterX} 
-        y2={entity2CenterY} 
-        stroke="#333" 
-        stroke-width="2" 
-        vector-effect="non-scaling-stroke"
-    />
+    {#if entity2.isWeak}
+        {@const lines = getParallelLines(entity2CenterX, entity2CenterY, midX, midY)}
+        <path d={lines.line1} stroke="#333" stroke-width="2" vector-effect="non-scaling-stroke"/>
+        <path d={lines.line2} stroke="#333" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    {:else}
+        <line 
+            x1={midX} 
+            y1={midY} 
+            x2={entity2CenterX} 
+            y2={entity2CenterY} 
+            stroke="#333" 
+            stroke-width="2" 
+            vector-effect="non-scaling-stroke"
+        />
+    {/if}
 
     <polygon 
         points={diamondPoints} 
