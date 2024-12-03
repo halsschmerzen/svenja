@@ -24,6 +24,7 @@
     let lastY = 0;
     let selectedEntity: EntityType | null = null;
     let selectedRelationship: RelationshipType | null = null;
+    let selectedAttribute: AttributeType | null = null;
     const cellSize = 30;
     const minScale = 0.75;
     const maxScale = 5;
@@ -269,6 +270,7 @@
         }
         selectedEntity = null;
         handleRelationshipDeselect();
+        selectedAttribute = null;
     }
 
     function handleEntitySelect(event: CustomEvent) {
@@ -341,6 +343,40 @@
         }
     }
 
+    function handleAttributeSelect(event: CustomEvent) {
+        selectedEntity = null;
+        selectedRelationship = null;
+        selectedAttribute = event.detail.attribute;
+        isSidebarOpen = true;
+    }
+
+    function handleAttributeDeselect() {
+        selectedAttribute = null;
+    }
+
+    function handleAttributeUpdate(event: CustomEvent) {
+        const updatedAttribute = event.detail.attribute;
+        if (selectedEntity) {
+            const entityIndex = entities.findIndex(e => e.id === selectedEntity.id);
+            if (entityIndex !== -1) {
+                const attrIndex = entities[entityIndex].attributes.findIndex(a => a.id === updatedAttribute.id);
+                if (attrIndex !== -1) {
+                    entities[entityIndex].attributes[attrIndex] = updatedAttribute;
+                    entities = [...entities];
+                }
+            }
+        } else if (selectedRelationship) {
+            const relIndex = relationships.findIndex(r => r.id === selectedRelationship.id);
+            if (relIndex !== -1) {
+                const attrIndex = relationships[relIndex].attributes.findIndex(a => a.id === updatedAttribute.id);
+                if (attrIndex !== -1) {
+                    relationships[relIndex].attributes[attrIndex] = updatedAttribute;
+                    relationships = [...relationships];
+                }
+            }
+        }
+    }
+
 </script>
 
 <svelte:window
@@ -359,6 +395,7 @@
     on:addRelationship={handleAddRelationship}
     {selectedEntity}
     {selectedRelationship}
+    {selectedAttribute}
 />
 
 {#if isRelationshipMode}
@@ -384,6 +421,10 @@
             {scale}
             {offsetX}
             {offsetY}
+            isSelected={selectedAttribute?.id === attribute.id}
+            on:select={handleAttributeSelect}
+            on:deselect={handleAttributeDeselect}
+            on:update={handleAttributeUpdate}
         />
     {/each}
 
@@ -407,6 +448,10 @@
             {scale}
             {offsetX}
             {offsetY}
+            isSelected={selectedAttribute?.id === attribute.id}
+            on:select={handleAttributeSelect}
+            on:deselect={handleAttributeDeselect}
+            on:update={handleAttributeUpdate}
         />
     {/each}
 {/each}
@@ -422,6 +467,7 @@
     bind:isOpen={isSidebarOpen}
     bind:selectedEntity
     bind:selectedRelationship
+    bind:selectedAttribute
     on:entityUpdate={({detail}) => {
         const index = entities.findIndex(e => e.id === detail.entity.id);
         if (index !== -1) {
@@ -434,6 +480,27 @@
         if (index !== -1) {
             relationships[index] = detail.relationship;
             relationships = [...relationships];
+        }
+    }}
+    on:attributeUpdate={({detail}) => {
+        if ('entities' in detail.attribute.connectedTo) {
+            const relIndex = relationships.findIndex(r => r.id === detail.attribute.connectedTo.id);
+            if (relIndex !== -1) {
+                const attrIndex = relationships[relIndex].attributes.findIndex(a => a.id === detail.attribute.id);
+                if (attrIndex !== -1) {
+                    relationships[relIndex].attributes[attrIndex] = detail.attribute;
+                    relationships = [...relationships];
+                }
+            }
+        } else {
+            const entityIndex = entities.findIndex(e => e.id === detail.attribute.connectedTo.id);
+            if (entityIndex !== -1) {
+                const attrIndex = entities[entityIndex].attributes.findIndex(a => a.id === detail.attribute.id);
+                if (attrIndex !== -1) {
+                    entities[entityIndex].attributes[attrIndex] = detail.attribute;
+                    entities = [...entities];
+                }
+            }
         }
     }}
 />

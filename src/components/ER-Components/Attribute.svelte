@@ -1,10 +1,14 @@
 <script lang="ts">
     import type { Attribute as AttributeType} from "../../Types/Attribute";
+    import { createEventDispatcher } from 'svelte';
 
     export let attribute: AttributeType;
     export let scale = 1;
     export let offsetX = 0;
     export let offsetY = 0;
+    export let isSelected = false;
+
+    const dispatch = createEventDispatcher();
 
     type Point = { x: number; y: number };
     let connectionStart: Point = { x: 0, y: 0 };
@@ -45,6 +49,15 @@
 
     function handleMouseUp() {
         isDragging = false;
+    }
+
+    function handleClick(event: MouseEvent) {
+        event.stopPropagation();
+        if (!isSelected) {
+            dispatch('select', { attribute });
+        } else {
+            dispatch('deselect');
+        }
     }
 
     $: {
@@ -108,11 +121,13 @@
     class:primary={attribute.isPrimary}
     class:multivalue={attribute.isMultivalue}
     class:calculated={attribute.isCalculated}
+    class:selected={isSelected}
     style="top: {attributePosition.y}px; 
            left: {attributePosition.x}px; 
            transform: scale({scale}); 
            transform-origin: top left;"
     on:mousedown={handleMouseDown}
+    on:click={handleClick}
 >
     <div class="name">{attribute.name}</div>
 </div>
@@ -155,6 +170,10 @@
 
     .calculated {
         border-style: dashed;
+    }
+
+    .selected {
+        outline: 2px solid green;
     }
 
     .name {

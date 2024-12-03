@@ -4,6 +4,7 @@
     import type { Relationship } from "../Types/Relationship";
     export let selectedEntity: Entity | null = null;
     export let selectedRelationship: Relationship | null = null;
+    export let selectedAttribute: AttributeType | null = null;
 
     const dispatch = createEventDispatcher();
 

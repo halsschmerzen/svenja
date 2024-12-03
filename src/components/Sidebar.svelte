@@ -5,6 +5,7 @@
     
     export let selectedEntity: EntityType | null;
     export let selectedRelationship: RelationshipType | null;
+    export let selectedAttribute: AttributeType | null;
     export let isOpen: boolean;
 
     const dispatch = createEventDispatcher();
@@ -14,6 +15,9 @@
     }
     $: if (selectedRelationship) {
         dispatch('relationshipUpdate', { relationship: selectedRelationship });
+    }
+    $: if (selectedAttribute) {
+        dispatch('attributeUpdate', { attribute: selectedAttribute });
     }
 </script>
 
@@ -88,6 +92,42 @@
                         <li>{attr.name}</li>
                     {/each}
                 </ul>
+            </div>
+        {:else if selectedAttribute}
+            <h2>Attribute</h2>
+            <div class="properties">
+                <label>
+                    Name:
+                    <input 
+                        type="text" 
+                        bind:value={selectedAttribute.name}
+                        on:input={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
+                    >
+                </label>
+                <label>
+                    Primary Key:
+                    <input 
+                        type="checkbox" 
+                        bind:checked={selectedAttribute.isPrimary}
+                        on:change={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
+                    >
+                </label>
+                <label>
+                    Multi-value:
+                    <input 
+                        type="checkbox" 
+                        bind:checked={selectedAttribute.isMultivalue}
+                        on:change={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
+                    >
+                </label>
+                <label>
+                    Calculated:
+                    <input 
+                        type="checkbox" 
+                        bind:checked={selectedAttribute.isCalculated}
+                        on:change={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
+                    >
+                </label>
             </div>
         {:else}
             <p>No item selected</p>
