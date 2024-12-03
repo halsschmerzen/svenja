@@ -264,7 +264,9 @@
                     id: relationships.length + 1,
                     name: "has",
                     entities: [selectedEntities[0], selectedEntities[1]],
-                    relationship_type: '1-N' 
+                    relationship_type: '1-N',
+                    from_entity: 'can', 
+                    to_entity: 'can'     
                 };
                 relationships = [...relationships, newRelationship];
                 selectedEntities = [];
