@@ -62,13 +62,18 @@
     }
 
     $: angle = Math.atan2(entity2CenterY - entity1CenterY, entity2CenterX - entity1CenterX);
-    $: offset = 90; 
+    $: offset = 70;
 
     $: fromOptionalX = entity1CenterX + offset * Math.cos(angle);
     $: fromOptionalY = entity1CenterY + offset * Math.sin(angle);
-
     $: toOptionalX = entity2CenterX - offset * Math.cos(angle);
     $: toOptionalY = entity2CenterY - offset * Math.sin(angle);
+
+
+    $: labelStartX = fromOptionalX;
+    $: labelStartY = fromOptionalY - 15;
+    $: labelEndX = toOptionalX; 
+    $: labelEndY = toOptionalY - 15;
 
 </script>
 
@@ -107,19 +112,20 @@
 
     <g class="multiplicity" on:click={() => toggleMultiplicity('start')}>
         <rect 
-            x={entity1CenterX + 100} 
-            y={entity1CenterY - 30} 
+            x={labelStartX - 10} 
+            y={labelStartY - 10} 
             width="20" 
             height="20" 
             fill="rgba(0, 255, 0, 0.3)" 
             class="hover-rect"
         />
         <text 
-            x={entity1CenterX - 100} 
-            y={entity1CenterY - 20} 
+            x={labelStartX} 
+            y={labelStartY} 
             text-anchor="middle" 
             font-size="14"
             fill="red"
+            dominant-baseline="middle"
         >
             {relationship.relationship_type.split('-')[0]}
         </text>
@@ -128,7 +134,7 @@
     <g class="optional-indicator start" on:click={() => toggleOptionality('from')}>
         {#if relationship.from_entity === 'can'}
             <circle 
-                cx={fromOptionalX+15} 
+                cx={fromOptionalX} 
                 cy={fromOptionalY} 
                 r="6" 
                 fill="white"
@@ -138,8 +144,8 @@
             />
         {:else}
             <rect 
-                x={fromOptionalX + 15} 
-                y={fromOptionalY-8} 
+                x={fromOptionalX - 6} 
+                y={fromOptionalY - 6} 
                 width="12" 
                 height="12" 
                 fill="transparent"
@@ -148,21 +154,23 @@
         {/if}
     </g>
 
+
     <g class="multiplicity" on:click={() => toggleMultiplicity('end')}>
         <rect 
-            x={entity2CenterX - 100} 
-            y={entity2CenterY + 30} 
+            x={labelEndX - 10} 
+            y={labelEndY - 10} 
             width="20" 
             height="20" 
             fill="rgba(0, 255, 0, 0.3)" 
             class="hover-rect"
         />
         <text 
-            x={entity2CenterX - 100} 
-            y={entity2CenterY - 20} 
+            x={labelEndX} 
+            y={labelEndY} 
             text-anchor="middle" 
             font-size="14"
             fill="blue"
+            dominant-baseline="middle"
         >
             {relationship.relationship_type.split('-')[1]}
         </text>
@@ -171,7 +179,7 @@
     <g class="optional-indicator end" on:click={() => toggleOptionality('to')}>
         {#if relationship.to_entity === 'can'}
             <circle 
-                cx={toOptionalX-15} 
+                cx={toOptionalX} 
                 cy={toOptionalY} 
                 r="6" 
                 fill="white" 
@@ -181,7 +189,7 @@
             />
         {:else}
             <rect 
-                x={toOptionalX - 15} 
+                x={toOptionalX - 6} 
                 y={toOptionalY - 6} 
                 width="12" 
                 height="12" 
@@ -201,7 +209,6 @@
         {relationship.name || 'has'}
     </text>
 </svg>
-
 <style>
     .relationship-line {
         position: absolute;
