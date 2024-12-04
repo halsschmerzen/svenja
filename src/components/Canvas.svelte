@@ -377,6 +377,33 @@
         }
     }
 
+    function handleAddSubattribute() {
+    if (selectedAttribute) {
+        if (!selectedAttribute.subattributes) {
+            selectedAttribute.subattributes = [];
+        }
+        
+        const newSubattribute: AttributeType = {
+            id: Date.now(), 
+            name: `Subattribute ${selectedAttribute.subattributes.length + 1}`,
+            x: 100, 
+            y: 50,  
+            connectedTo: selectedAttribute,
+            isPrimary: false,
+            isCalculated: false,
+            isMultivalue: false
+        };
+
+        selectedAttribute.subattributes.push(newSubattribute);
+        
+        if ('entities' in selectedAttribute.connectedTo) {
+            relationships = [...relationships];
+        } else if ('attributes' in selectedAttribute.connectedTo) {
+            entities = [...entities];
+        }
+    }
+}
+
 </script>
 
 <svelte:window
@@ -393,6 +420,7 @@
     on:addAttribute={handleAddAttribute}
     on:toggleTheme={toggleCanvasTheme}
     on:addRelationship={handleAddRelationship}
+    on:addSubattribute={handleAddSubattribute}
     {selectedEntity}
     {selectedRelationship}
     {selectedAttribute}

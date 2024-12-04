@@ -2,9 +2,10 @@
     import { createEventDispatcher } from "svelte";
     import type { Entity } from "../Types/Entity";
     import type { Relationship } from "../Types/Relationship";
+    import type { Attribute } from "../Types/Attribute";
     export let selectedEntity: Entity | null = null;
     export let selectedRelationship: Relationship | null = null;
-    export let selectedAttribute: AttributeType | null = null;
+    export let selectedAttribute: Attribute | null = null;
 
     const dispatch = createEventDispatcher();
 
@@ -45,6 +46,10 @@
     <button on:click={handleAddRelationship}>Add Relationship</button>
     {#if selectedEntity || selectedRelationship}
         <button on:click={handleAddAttribute}>Add Attribute</button>
+    {/if}
+
+    {#if selectedAttribute}
+        <button on:click={() => dispatch('addSubattribute')}>Add Subattribute</button>
     {/if}
 </div>
 

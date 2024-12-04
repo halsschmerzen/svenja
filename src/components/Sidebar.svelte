@@ -151,7 +151,7 @@
                         on:input={() => dispatch('attributeUpdate', { attribute: selectedAttribute })}
                     >
                 </label>
-                {#if !('entities' in selectedAttribute.connectedTo)}
+                {#if !('entities' in selectedAttribute.connectedTo) && !('subattributes' in selectedAttribute.connectedTo)}
                     <label>
                         Primary Key:
                         <input 
