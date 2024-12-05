@@ -216,6 +216,7 @@
                     isMultivalue: false
                 };
                 entity.attributes = [...entity.attributes, newAttribute];
+                entities = [...entities];
             }
         }
 
